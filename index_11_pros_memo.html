@@ -1,27 +1,24 @@
-
 <!DOCTYPE html>
 <html lang="ko">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
-
     </head>
     <body>
         <div id="root"></div>
     </body>
-    <!-- <script src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"></script> -->
-    <script src="https://unpkg.com/react@17.0.2/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/prop-types@15.7.2/prop-types.js"></script>
- 
 
     <script type="text/babel">
-        function Btn({text, fontSize = 30}) {
+        function Btn({text, onClick}) {
+            console.log(text, "was render.")
          
             return (
                 <button
+                    onClick={onClick}
                     style={{
                         backgroundColor:'tomato' ,
                         color: 'darkblue',
@@ -29,7 +26,6 @@
                         border: 'none',
                         borderRadius: '10px',
                         marginRight: '10px',
-                        fontSize
                       
                     }}
                 >
@@ -37,19 +33,17 @@
                 </button>
             );
         }
+        // 부모 컴포넌트 변화 있을때만 렌더링 
+        const MemorizedBtn = React.memo(Btn)
 
-        // 타입 정의
-        Btn.propTypes= {
-            text: PropTypes.string.isRequired,
-            fontSize: PropTypes.number,
-
-        }
 
         function App() {
+            const [value, setValue] = React.useState("Save Changes");
+            const changeValue = () => setValue("Revert Changes");
             return (
                 <div>
-                    <Btn text= "Save Changes" fontSize={20}/>
-                    <Btn text= {14} />
+                    <MemorizedBtn text= {value} onClick={changeValue} />
+                    <MemorizedBtn text= "continue" />
                   
                 </div>
             );
