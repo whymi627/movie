@@ -1,4 +1,4 @@
-
+import Button from "./Button";
 function App() {
   return (
     <div>
@@ -6,6 +6,8 @@ function App() {
         <h1>
           Hello!!
         </h1>
+        {/* <Button text= {12}/> */}
+        <Button text= {"Click me!"}/>
     </div>
        
   );
