@@ -1,43 +1,80 @@
 import { useState, useEffect } from "react";
 
 function App() {
-  const [toDo, setToDo] = useState("");
-  const [toDos, setToDos] = useState([]);
-  const onChange = (event) => {
-    setToDo(event.target.value);
-    // console.log("to Do: ", toDo);
-  };
-  const onSubmit = (event) => {
-    event.preventDefault();
-    if (toDo === "") {
-      return;
-    }
-    // 추가하는 방법
-    setToDos((currentArray) => [toDo, ...currentArray]);
-    setToDo("");
-    // console.log(toDo);
-  };
-  console.log(toDos);
-  console.log(toDos.map((item, index) => <li key={index}>{item}</li>))
+  const [loading, setLoading] = useState(true);
+  const [movies, setMovies] = useState([]);
+  const getMovies = async () => {
+    // #2
+    //   const response = await fetch(
+    //     "https://yts.mx/api/v2/list_movies.json?minimun_rating=8.5&sort_by=year"
+    //   );
+    //   const json = await response.json();
+    //   setMovies(json.data.movies);
+    //   setLoading(false);
+    // };
 
+    // #3 더 짧게...
+    const json = await (
+      await fetch(
+        "https://yts.mx/api/v2/list_movies.json?minimun_rating=9.0&sort_by=year"
+      )
+    ).json();
+    setMovies(json.data.movies);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getMovies();
+  }, []);
+
+  //#1
+  // useEffect(() => {
+  //   fetch(
+  //     `https://yts.mx/api/v2/list_movies.json?minimun_rating=8.5&sort_by=year`
+  //   )
+  //     .then((response) => response.json())
+  //     // .then((json) => console.log(json))
+  //     .then((json) => {
+  //       setMovies(json.data.movies);
+  //       setLoading(false);
+  //     });
+  // }, []);
+
+  console.log(movies);
   return (
     <div>
-      <h1>My To Dos ({toDos.length})</h1>
-      <form onSubmit={onSubmit}>
-        <input
-          onChange={onChange}
-          value={toDo}
-          type="text"
-          placeholder="Write your to do..."
-        />
-        <button>Add To Do</button>
-      </form>
-      <hr />
-      <ul>
-        {toDos.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
+      {loading ? (
+        <h1>Loading...</h1>
+      ) : (
+        <div>
+          {movies.map((movie) => (
+            <div
+              key={movie.id}
+              style={{
+                boxShadow: "2px 5px 10px lightcoral",
+                display: "flex",
+              }}
+            >
+              <img src={movie.medium_cover_image} alt="no-picture" />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  paddingLeft: "15px"
+                }}
+              >
+                <h2>{movie.title}</h2>
+                <p>{movie.summary}</p>
+                <ul>
+                  {movie.genres.map((genre) => (
+                    <li key={genre}>{genre}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
